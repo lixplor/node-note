@@ -46,4 +46,60 @@ var request = http.request(options, function(response) {
     console.log(response);
 };
 request.write("Hello world');
+
+// 客户端获取流
+http.get('http://www.baidu.com/', function(response) {
+    var body = [];
+    console.log(response.statusCode);
+    console.log(response.headers);
+    response.on('data', function(chunck) {
+        body.push(chunk);
+    });
+    response.on('end', function() {
+        body = Buffer.concat(body);
+        console.log(body.toString());
+    });
+});
+```
+
+## HTTPS
+
+* `HTTPS`与`HTTP`的区别是需要处理`SSL`证书
+* Node支持`SNI`技术, 可以根据HTTPS客户端请求使用的域名动态使用不同的证书, 因此同一个HTTPS服务器可以使用多个域名提供服务
+* 如果目标服务器使用的SSL证书是自制的, 不是颁发机构购买的, 默认`https`模块会拒绝连接, 提示证书有安全问题.
+    - `options`中添加`rejectUnauthorized:false`可以禁用对证书有效性的检查
+
+```javascript
+// 创建HTTPS服务器
+var https = require('https');
+var options = {
+    key:fs.readFileSync('./ssl/default.key'),
+    cert:fs.readFileSync('./ssl/default.cert')
+};
+var server = https.createServer(options, function(request, response) {
+
+}).listen(8124);
+
+// 添加多组证书
+server.addContext('foo.com', {
+    key: fs.readFileSync('./ssl/foo.com.key'),
+    cert: fs.readFileSync('./ssl/foo.com.cer')
+});
+
+server.addContext('bar.com', {
+    key: fs.readFileSync('./ssl/bar.com.key'),
+    cert: fs.readFileSync('./ssl/bar.com.cer')
+});
+
+// 创建HTTPS客户端
+var options = {
+        hostname: 'www.example.com',
+        port: 443,
+        path: '/',
+        method: 'GET'
+    };
+
+var request = https.request(options, function (response) {});
+
+request.end();
 ```
