@@ -182,3 +182,119 @@ console.log(parseUrlToObj(urlObj));
 $ node parseUrlObjToStr.js
 http://www.baidu.com/s?wd=s
 ```
+
+## Query String
+
+* `querystring`模块用于URL查询参数字符串与对象的转换
+* 方法
+    - `.parse(qsStr)`: 将字符串转换为查询参数对象
+    - `.stringify(qsObj)`: 将查询参数对象转换为字符串
+
+字符串转换为查询参数对象
+
+```javascript
+var qs = require('querystring');
+
+console.log(qs.parse('foo=bar&baz=qux&baz=quux&corge'));
+```
+
+执行脚本
+
+```shell
+$ node strToQs.js
+{ foo: 'bar', baz: [ 'qux', 'quux' ], corge: '' }
+```
+
+查询参数对象转换为字符串
+
+```javascript
+var qs = require('querystring');
+console.log(qs.stringify({ foo: 'bar', baz: [ 'qux', 'quux' ], corge: '' }));
+```
+
+执行脚本
+
+```shell
+$ node qsToStr.js
+foo=bar&baz=qux&baz=quux&corge=
+```
+
+## Zlib
+
+* `Zlib`模块用于数据压缩和解压
+* 方法
+    - `.gzip(data, callback)`: 压缩数据
+    - `.gunzip(data, callback)`: 解压数据
+* 判断是否支持gzip
+    - 服务端判断客户端是否支持: `accept-encoding:gzip`
+    - 客户端判断服务端是否使用: `accept-encoding:gzip`
+
+## Net
+
+* `net`模块用于创建Socket服务端和客户端
+* 方法
+    - `.createServer(callback)`: 创建服务端
+    - `.connect(option, callback)`: 创建客户端
+
+创建Socket服务端
+
+```javascript
+var net = require('net');
+
+net.createServer(function(conn) {
+    conn.on('data', function(data) {
+        conn.write([
+            'HTTP/1.1 200 OK',
+            'Content-Type: text/plain',
+            'Content-Length: 11',
+            '',
+            'Hello World'
+        ].join('\n'));
+    });
+}).listen(8124);
+```
+
+执行脚本
+
+```shell
+$ node socketServer.js
+
+```
+
+创建Socket客户端
+
+```javascript
+var net = require('net');
+
+var options = {
+    port:8124,
+    host:'localhost'
+};
+
+var client = net.connect(options, function() {
+    client.write([
+        'GET / HTTP/1.1',
+        'User-Agent: curl/7.26.0',
+        'Host: localhost',
+        'Accept: */*',
+        '',
+        ''
+    ].join('\n'));
+});
+
+client.on('data', function(data) {
+    console.log(data.toString());
+    client.end();
+});
+```
+
+执行脚本
+
+```shell
+$ node socketClient.js  # 以下为服务端返回的响应
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Content-Length: 11
+
+Hello World
+```
