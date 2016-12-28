@@ -103,3 +103,82 @@ var request = https.request(options, function (response) {});
 
 request.end();
 ```
+
+## URL
+
+* `URL`模块用来解析, 生成, 和拼接URL
+    - `.parse(url)`: 解析URL字符串为URL对象, 不完整的URL也可以解析
+    - `.parse(url, isParseToQueryString, allowNoProtocol)`: 第二个参数boolean, 是否将查询参数解析为`QueryString`对象; 第三个参数boolean, 是否解析没有协议头的URL, 如`//www.baidu.com`
+    - `format(urlObj)`: 将URL对象转换为URL字符串
+
+完整的URL组成部分如下:
+
+```shell
+                           href
+ -----------------------------------------------------------------
+                            host              path
+                      --------------- ----------------------------
+ http: // user:pass @ host.com : 8080 /p/a/t/h ?query=string #hash
+ -----    ---------   --------   ---- -------- ------------- -----
+protocol     auth     hostname   port pathname     search     hash
+                                                ------------
+                                                   query
+```
+
+URL字符串转换为URL对象:
+
+```javascript
+var url = require('url');
+
+function parseUrlToObject(urlStr) {
+    return url.parse(urlStr);
+}
+
+var testUrl = 'http://user:pass@host.com:8080/p/a/t/h?query=string#hash';
+console.log(parseUrlToObject(testUrl));
+```
+
+执行脚本:
+
+```javascript
+$ node parseUrl.js
+Url {
+  protocol: 'http:',
+  slashes: true,
+  auth: 'user:pass',
+  host: 'host.com:8080',
+  port: '8080',
+  hostname: 'host.com',
+  hash: '#hash',
+  search: '?query=string',
+  query: 'query=string',
+  pathname: '/p/a/t/h',
+  path: '/p/a/t/h?query=string',
+  href: 'http://user:pass@host.com:8080/p/a/t/h?query=string#hash' }
+```
+
+URL对象转换为字符串:
+
+```javascript
+var url = require('url');
+
+function parseUrlToObj(urlObj) {
+    return url.format(urlObj);
+}
+
+var urlObj = {
+    protocol:'http:',
+    host:'www.baidu.com',
+    pathname:'/s',
+    search:'wd=s'
+};
+
+console.log(parseUrlToObj(urlObj));
+```
+
+执行脚本:
+
+```shell
+$ node parseUrlObjToStr.js
+http://www.baidu.com/s?wd=s
+```
