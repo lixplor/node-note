@@ -63,3 +63,73 @@ http.createServer(callback).listen(80, function () {
     process.setuid(uid);
 });
 ```
+
+### 创建子进程
+
+* `.spawn(exec, args, options)`
+    - 参数`exec`: 执行文件路径, 可以是执行文件的相对或绝对路径, 也可以是根据PATH环境变量能找到的执行文件名
+    - 参数`args`: 命令行参数的数组
+    - 参数`options`: 配置子进程的执行环境和行为
+
+### 进程间通信
+
+* *nix系统下, 进程可以通过`信号`互相通信
+    - `.kill`是父进程向子进程发送`SIGTERM`信号
+* 如果父子进程都是Node进程, 可以通过IPC双向传递数据
+
+```javascript
+// parent.js
+var child = child_process.spawn('node', ['child.js']);
+child.kill('SIGTERM');
+
+// child.js
+process.on('SIGTERM', function() {
+    cleanUp();
+    process.exit(0);
+});
+```
+
+IPC双向通信
+
+* 父进程
+    - `options.stdio`通过`ipc`开启一条IPC通道, 之后可以监听子进程对象的`message`事件接收来自子进程的消息
+    - `.send`给子进程发送消息
+* 子进程
+    - 在`process`对象监听`message`事件接收来自父进程的消息, 通过`.send`向父进程发送消息
+* 数据在传递过程中, 现在发送端使用`JSON.stringify`方法序列化, 接收端使用`JSON.parse`方法反序列化
+
+
+```javascript
+// parent.js
+var child = child_process.spawn('node', ['child.js'], {
+    stdio:[0, 1, 2, 'ipc']
+});
+child.on('message', function(msg) {
+    console.log(msg);
+});
+child.send({hello:'hello'});
+
+// child.js
+process.on('message', function(msg) {
+    msg.hello = msg.hello.toUpperCase();
+    process.send(msg);
+});
+```
+
+### 守护子进程
+
+* 守护进程一般用于监控工作进程的运行状态, 在工作进程不正常退出时重启工作进程, 保障工作进程不间断运行
+
+```
+// daemon.js
+function spawn(mainModule) {
+    var worker = child_process.spawn('node', [mainModule]);
+    worker.on('exit', function(code) {
+        if (code !== 0) {
+            spawn(mainModule);
+        }
+    });
+}
+spawn('worker.js');
+```
+
