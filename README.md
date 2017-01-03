@@ -43,9 +43,9 @@ Node.js学习笔记
             - [x] ~~域~~(已过时)
         - [x] 示例项目
     - 一起学Node.js
-        - [ ] 开发环境搭建
-            - [ ] Node.js的安装和使用
-            - [ ] MongoDB的安装和使用
+        - [x] 开发环境搭建
+            - [x] Node.js的安装和使用
+            - [x] MongoDB的安装和使用
         - [ ] Node.js知识点讲解
             - [ ] require
             - [ ] exports和module.exports
