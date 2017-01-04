@@ -41,9 +41,46 @@ source .bash_profile
 mkdir /-p /data/db
 
 # 设置数据目录的权限, 要有读写权限
-
+sudo chmod 777 /data
+sudo chmod 777 /data/db
 
 # 运行mongo
 mongod
+
+# 设置开机启动
+brew services start mongodb
 ```
 
+## 遇到的问题
+
+* brew update报错
+
+```shell
+➜  ~ brew update
+Error: /usr/local must be writable!
+```
+
+Mac OS X 10.12中`/usr/local`默认不可写, 需要修改权限:
+
+```shell
+➜  ~ sudo chown -R $(whoami) /usr/local
+```
+
+或者更新一下Homebrew, `brew upgrade`, 新版Homebrew不再需要`/usr/local`
+
+
+* brew update报错2
+
+```shell
+➜  ~ brew update
+/usr/local/Library/Homebrew/cmd/update.sh: line 13: /usr/local/Library/ENV/scm/git: No such file or directory
+/usr/local/Library/Homebrew/cmd/update.sh: line 13: /usr/local/Library/ENV/scm/git: No such file or directory
+/usr/local/Library/Homebrew/cmd/update.sh: line 13: /usr/local/Library/ENV/scm/git: No such file or directory
+/usr/local/Library/Homebrew/cmd/update.sh: line 13: /usr/local/Library/ENV/scm/git: No such file or directory
+/usr/local/Library/Homebrew/cmd/update.sh: line 13: /usr/local/Library/ENV/scm/git: No such file or directory
+Error: update-report should not be called directly!
+```
+
+[stackOverFlow](http://stackoverflow.com/questions/38410020/homebrew-error-update-report-should-not-be-called-directly)
+
+先`brew upgrade`, 然后`brew update`
