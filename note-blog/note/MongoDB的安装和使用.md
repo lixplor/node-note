@@ -51,6 +51,16 @@ mongod
 brew services start mongodb
 ```
 
+## 安装MongoDB的GUI客户端
+
+客户端有多种选择:
+* Robomongo
+* Mongochef
+* MongoBooster
+
+我最终安装的是MongoBooster
+
+
 ## 遇到的问题
 
 * brew update报错

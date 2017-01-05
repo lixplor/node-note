@@ -6,6 +6,9 @@ Node.js学习笔记
 * 资源
     - [七天学会NodeJS](https://www.lvtao.net/content/book/node.js.htm)
     - [一起学Node.js](https://github.com/nswbmw/N-blog)
+    - [Node.js实战](https://book.douban.com/subject/25870705/)
+    - [Node.js实战(第一季)](https://book.douban.com/subject/25867920/)
+    - [Node.js实战(第二季)](https://book.douban.com/subject/26642320/)
     - [node与express开发](https://book.douban.com/subject/26301434/)
     - [深入浅出Nodejs](https://book.douban.com/subject/25768396/)
     - [Express官方文档中文版](http://www.expressjs.com.cn/)
