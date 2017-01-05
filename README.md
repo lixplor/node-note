@@ -49,13 +49,13 @@ Node.js学习笔记
         - [x] 开发环境搭建
             - [x] Node.js的安装和使用
             - [x] MongoDB的安装和使用
-        - [ ] Node.js知识点讲解
-            - [ ] require
-            - [ ] exports和module.exports
-            - [ ] Promise
-            - [ ] 环境变量
-            - [ ] package.json
-            - [ ] npm使用注意事项
+        - [x] Node.js知识点讲解
+            - [x] require
+            - [x] exports和module.exports
+            - [x] Promise
+            - [x] 环境变量
+            - [x] package.json
+            - [x] npm使用注意事项
         - [ ] 了解Express
             - [ ] 初始化一个Express项目
             - [ ] 路由
