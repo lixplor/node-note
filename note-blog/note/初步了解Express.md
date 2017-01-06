@@ -93,3 +93,107 @@ router.get('/:name', function(req, res) {
 
 module.exports = router;
 ```
+
+## ejs模板引擎
+
+* 模板引擎是将页面模板和数据结合起来, 生成html的工具
+* ejs是模板引擎的一种
+* [官方文档](https://www.npmjs.com/package/ejs#tags)
+
+安装ejs
+
+```shell
+npm i ejs --save
+```
+
+设置模板引擎
+
+```javascript
+var express = require('express');
+var app = express();
+
+// 设置存放模板文件的目录
+app.set('views', path.join(__dirname, 'views'));
+// 设置模板引擎框架为ejs
+app.set('view engine', 'ejs');
+```
+
+创建模板引擎文件
+* `<% code %>`: 运行JS代码, 不输出html页面. 可以将JS代码和HTML混合编写, 类似jsp写法
+* `<%- code %>`: 显示原始HTML内容, 即渲染后的HTML页面
+* `<%= code %>`: 显示转义后的HTML内容, 即HTML原始代码
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <style type="text/css">
+      body {padding: 50px;font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;}
+    </style>
+  </head>
+  <body>
+    <h1><%= name.toUpperCase() %></h1>
+    <p>hello, <%= name %></p>
+  </body>
+</html>
+```
+
+使用模板文件渲染页面
+* `res.render(template, data)`
+    - template: 模板名称
+    - data: 模板的数据
+
+```javascript
+router.get('/:name', function(req, res) {
+  res.render('users', {
+    name: req.params.name
+  });
+});
+```
+
+使用`include`引入其他模板文件
+* 用于拆分模板, 提高复用性, 减少重复代码, 使模板结构清晰
+* `<%- include('模板名称') %>`
+
+```js
+<%- include('header') %>
+  <h1><%= name.toUpperCase() %></h1>
+  <p>hello, <%= name %></p>
+<%- include('footer') %>
+```
+
+
+## express浅析
+
+### 中间件
+
+* `中间件(middleware)`是用来处理请求的
+* `next()`
+    - 一个中间件处理完, 可以通过`next()`方法, 将请求传递给下一个中间件
+    - 当没有调用`next()`方法时, 请求不会向下传递
+    - `next(error)`可以停止传递请求到下一个中间件, 并返回一个错误
+* `app.use()`加载中间件
+
+```javascript
+app.use(function(req, res, next) {
+  console.log('1');
+  next();
+});
+
+app.use(function(req, res, next) {
+  console.log('2');
+  res.status(200).end();
+});
+```
+
+### 错误处理
+
+* 4个参数
+
+```javascript
+//错误处理
+app.use(function(err, req, res, next) {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+```

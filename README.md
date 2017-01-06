@@ -6,6 +6,7 @@ Node.js学习笔记
 * 资源
     - [七天学会NodeJS](https://www.lvtao.net/content/book/node.js.htm)
     - [一起学Node.js](https://github.com/nswbmw/N-blog)
+    - [从零开始nodejs](http://blog.fens.me/series-nodejs/)
     - [Node.js实战](https://book.douban.com/subject/25870705/)
     - [Node.js实战(第一季)](https://book.douban.com/subject/25867920/)
     - [Node.js实战(第二季)](https://book.douban.com/subject/26642320/)
@@ -59,8 +60,8 @@ Node.js学习笔记
         - [ ] 了解Express
             - [x] 初始化一个Express项目
             - [x] 路由
-            - [ ] 模板引擎
-            - [ ] Express浅析
+            - [x] 模板引擎
+            - [x] Express浅析
         - [ ] 简单博客开发
             - [ ] 开发环境 
             - [ ] 准备工作
