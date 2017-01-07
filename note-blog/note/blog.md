@@ -226,3 +226,20 @@ module.exports = {
     - 删除指定文章的指定评论: `/posts/:postId/comment/:commentId/delete`
 
 
+## session
+
+* HTTP是无状态的协议, 所以在服务端需要记录用户状态时, 需要用到一种机制来识别用户
+    - `cookie`: 存储在浏览器, 有大小限制, 可以在客户端被修改, 并不安全
+    - `session`: 存储在服务端, 没有大小限制. 实现方式基于cookie, 即session id存储在浏览器的cookie中
+* 使用`express-session`中间件实现session的支持
+    - session中间件会在req上添加session对象
+        - 最初`req.session`为`{}`空对象
+        - 当用户登录后, 设置`req.session.user=用户信息`
+        - 返回浏览器的头信息中会带上`set-cookie`, 将session id写入浏览器的cookie中
+        - 此后该用户所有的请求中都会通过带有的cookie中的session id让服务端查找到该用户, 保持用户的状态
+
+
+
+```javascript
+app.use(session(options));
+```
