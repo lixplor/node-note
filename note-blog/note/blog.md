@@ -16,24 +16,35 @@
 
 
 ```shell
-- models/              # 存放模型, 即操作数据库的文件
+- models/                    # 存放模型, 即操作数据库的文件
       
-- views/               # 存放模板文件
-      body.ejs         # 主题模板
-- routes/              # 存放路由文件
-      index.js         # 根路径路由处理文件
-- middlewares/         # 存放自定义中间件
-      check.js         # 检查用户状态的中间件
-- lib/                 # 库
-      mongo.js         # 操作mongodb
-- public               # 存放静态文件
-    + css/             # css
-    + img/             # 图片
-- config/              # 存放配置文件
-      default.js       # 默认配置文件
-+ node_modules         # 第三方依赖包
-  index.js             # 程序主文件
-  package.json         # 项目信息文件
+- views/                     # 存放模板文件
+      header.ejs             # 页面头部模板
+      body.ejs               # 页面主体模板
+      footer.ejs             # 页面脚部模板
+    - components/            # 存放小组件模板
+          nav.ejs            # 导航栏模板
+          nav-setting.ejs    # 导航栏设置按钮模板
+          notification.ejs   # 通知条模板
+- routes/                    # 存放路由文件
+      index.js               # 根路径路由处理文件
+      posts.js               # 文章相关路由
+      signin.js              # 登录路由
+      signout.js             # 登出路由
+      signup.js              # 注册路由
+- middlewares/               # 存放自定义中间件
+      check-user.js          # 检查用户状态的中间件
+- lib/                       # 驱动库
+      mongo.js               # 连接mongodb
+- public                     # 存放静态文件
+    - css/                   # css
+          style.css          # 样式
+    + img/                   # 图片
+- config/                    # 存放配置文件
+      default.js             # 默认配置文件
++ node_modules               # 第三方依赖包
+  index.js                   # 程序主文件
+  package.json               # 项目信息文件
   .gitignore           # git忽略文件
 ```
 
@@ -293,6 +304,7 @@ next();
     - `app.get('/')`和`router.get('/')`区别?
     app是express对象, `/`是主机根路径; router是当前路由文件, `/`相对于当前路由路径
 
+
 ### 创建入口文件
 
 * express的相关方法
@@ -300,3 +312,51 @@ next();
     - `express.static(root, [options])`: express中唯一内置中间件. 用于静态文件
 * `__dirname`: node内置变量, 指向当前文件所在目录的绝对路径
 * `__filename`: node内置变量, 指向当前文件的绝对路径
+
+
+## 页面设计
+
+
+### 页面切分
+
+主页:   
+![主页](https://github.com/nswbmw/N-blog/raw/master/book/img/4.5.12.png)   
+
+文章页:   
+![文章页](https://github.com/nswbmw/N-blog/raw/master/book/img/4.5.13.png)
+
+
+### 模板拆分
+
+* 根据UI图, 将模板文件拆分为多个部分, 然后使用`<%- include('模板名') %>`引入
+* 模板中引用了一些变量, 这些变量是在`index.js`中设置的, 通过`app.locals`和`res.locals`两个变量
+* express中有两个对象可用于模板的渲染, 两者基本相同, 但在使用习惯上略有区别
+    - `app.locals`: 通常挂载常量信息(如博客名, 描述, 作者)
+    - `res.locals`: 通常挂载变量信息, 即每次请求的值可能不一样(如用户信息)
+
+```javascript
+// 设置模板全局常量, 使用app.locals
+app.locals.blog = {
+    title:pkg.name,
+    description:pkg.description
+};
+
+// 添加模板必须的三个变量, 使用res.locals
+app.use(function(req, res, next) {
+    res.locals.user = req.session.user;
+    res.locals.success = req.flash('success').toString();
+    res.locals.error = req.flash('error').toString();
+    next();
+});
+```
+
+
+## 连接数据库
+
+```javascript
+var config = require('config-lite');
+var mongoose = require('mongoose');
+
+// 连接数据库
+mongoose.connect(config.mongodb);
+```
