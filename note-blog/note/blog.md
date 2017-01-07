@@ -1,9 +1,11 @@
 # blog项目
 
+
 ## 初始化项目目录
 
 * 创建目录`myblog`
 * `npm init`初始化`package.json`文件
+
 
 ## 创建目录结构
 
@@ -20,6 +22,8 @@
       body.ejs         # 主题模板
 - routes/              # 存放路由文件
       index.js         # 根路径路由处理文件
+- middlewares/         # 存放自定义中间件
+      check.js         # 检查用户状态的中间件
 - lib/                 # 库
       mongo.js         # 操作mongodb
 - public               # 存放静态文件
@@ -32,6 +36,7 @@
   package.json         # 项目信息文件
   .gitignore           # git忽略文件
 ```
+
 
 ## 安装依赖模块
 
@@ -176,6 +181,7 @@ npm i config-lite connect-flash connect-mongo ejs express express-formidable exp
   └── stack-trace@0.0.9
 ```
 
+
 ## 创建配置文件
 
 * 配置文件用于配置服务器监听的端口号, session, mongodb连接等
@@ -196,6 +202,7 @@ module.exports = {
     mongodb:'mongodb:localhost:27017/nblog'    // mongodb连接配置
 };
 ```
+
 
 ## 功能和路由设计
 
@@ -226,7 +233,7 @@ module.exports = {
     - 删除指定文章的指定评论: `/posts/:postId/comment/:commentId/delete`
 
 
-## session
+### session
 
 * HTTP是无状态的协议, 所以在服务端需要记录用户状态时, 需要用到一种机制来识别用户
     - `cookie`: 存储在浏览器, 有大小限制, 可以在客户端被修改, 并不安全
@@ -238,8 +245,58 @@ module.exports = {
         - 返回浏览器的头信息中会带上`set-cookie`, 将session id写入浏览器的cookie中
         - 此后该用户所有的请求中都会通过带有的cookie中的session id让服务端查找到该用户, 保持用户的状态
 
-
-
 ```javascript
 app.use(session(options));
 ```
+
+
+### 页面通知
+
+* 页面操作成功, 失败, 或其他情况, 需要显示通知提示
+* `connect-flash`中间件可以实现该功能
+    - 它通过设置初始值`req.session.flash = {}`, 通过`req.flash(name, value)`设置该对象的字段和值, 通过`req.flash(name)`获取值, 同时删除该字段
+
+
+### 权限控制
+
+* 登录/未登录用户的操作权限需要区分
+* 权限控制的实现方式
+    - 将用户状态检查封装为一个中间件, 在每个需要权限控制的路由加载该中间件
+
+```javascript
+// 从session中获取用户信息
+req.session.user
+
+// 用户信息不存在
+!req.session.user
+
+// 重定向页面
+res.redirect('路由');  // 重定向到指定路由
+res.redirect('back');  // 重定向返回到前一个页面
+
+// 调用下一个中间件
+next();
+```
+
+
+### 创建路由文件
+
+* express的相关方法
+    - `var app = express();`: 创建express对象
+    - `app.METHOD(path, callback [, callback ...])`: HTTP方法
+    - `app.use([path,] function [, function...])`: 为指定路径加载中间件方法
+    - `express.Router([options])`: 创建路由对象
+    - `res.send()`: 发送响应
+* 注意
+    - 在特定路由文件中, 方法中的路径根目录是以当前路由文件开始的. 如`/posts.js`路由中, 操作`/posts/:postId`路径时只需要写`/:postId`即可
+* 疑问
+    - `app.get('/')`和`router.get('/')`区别?
+    app是express对象, `/`是主机根路径; router是当前路由文件, `/`相对于当前路由路径
+
+### 创建入口文件
+
+* express的相关方法
+    - `app.set(name, value)`: 为指定字段设置值, name是app设置表中的字段
+    - `express.static(root, [options])`: express中唯一内置中间件. 用于静态文件
+* `__dirname`: node内置变量, 指向当前文件所在目录的绝对路径
+* `__filename`: node内置变量, 指向当前文件的绝对路径
