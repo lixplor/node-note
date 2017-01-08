@@ -57,12 +57,12 @@ Node.js学习笔记
             - [x] 环境变量
             - [x] package.json
             - [x] npm使用注意事项
-        - [ ] 了解Express
+        - [x] 了解Express
             - [x] 初始化一个Express项目
             - [x] 路由
             - [x] 模板引擎
             - [x] Express浅析
-        - [ ] 简单博客开发
+        - [x] 简单博客开发
             - [x] 开发环境 
             - [x] 准备工作
             - [x] 配置文件
