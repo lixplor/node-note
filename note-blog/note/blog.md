@@ -36,6 +36,7 @@
       check-user.js          # 检查用户状态的中间件
 - lib/                       # 操作库
       mongo.js               # 操作mongodb
+- logs/                      # 存放日志
 - public                     # 存放静态文件
     - css/                   # css
           style.css          # 样式
@@ -60,7 +61,7 @@
 * `config-lite`: 读取配置文件
 * `marked`: markdown解析
 * `moment`: 时间格式化
-* `mongoose`: mongodb驱动
+* `mongolass`: mongodb驱动
 * `objectid-to-timestamp`: 根据ObjectId生成时间戳
 * `sha1`: sha1加密, 用于密码加密
 * `winston`: 日志
@@ -68,7 +69,7 @@
 
 ```shell
 # 安装依赖
-npm i config-lite connect-flash connect-mongo ejs express express-formidable express-session marked moment mongoose objectid-to-timestamp sha1 winston express-winston --save
+npm i config-lite connect-flash connect-mongo ejs express express-formidable express-session marked moment mongolass objectid-to-timestamp sha1 winston express-winston --save
 
 # 安装完毕后所有的依赖包如下
 ├─┬ config-lite@1.5.0
@@ -162,7 +163,7 @@ npm i config-lite connect-flash connect-mongo ejs express express-formidable exp
 │ └── lodash@4.11.2
 ├── marked@0.3.6
 ├── moment@2.17.1
-├─┬ mongoose@4.7.6
+├─┬ mongoose@4.7.6          # 注意这里最初安装的mongoose, 后来改为mongolass
 │ ├─┬ async@2.1.4
 │ │ └── lodash@4.17.4
 │ ├── bson@1.0.3
@@ -355,10 +356,11 @@ app.use(function(req, res, next) {
 
 ```javascript
 var config = require('config-lite');
-var mongoose = require('mongoose');
+var Mongolass = require('mongolass');
+var mongolass = new Mongolass();
 
 // 连接数据库
-mongoose.connect(config.mongodb);
+mongolass.connect(config.mongodb);
 ```
 
 
@@ -388,3 +390,83 @@ mongoose.connect(config.mongodb);
     - `req.fields.HTML标签name属性值`: 获取标签value
     - `req.files.HTML标签name属性值.path`: 获取文件路径
         - 然后再`.split(path.sep).pop()`获取文件名
+
+
+## 登出和登录
+
+### 登出
+
+* 登出就是将session中的用户信息清空
+    - `req.session.user = null`
+
+### 登录
+
+* 登录就是查询用户名是否存在, 密码是否匹配. 如果存在且匹配, 则将用户信息保存到session中(不存密码)
+
+
+
+## 文章
+
+
+### 文章模型设计
+
+* 文章模型
+    - author: 作者id
+    - title: 标题
+    - content: 文章内容
+    - pv: 浏览量
+
+### 发表文章
+
+* 获取提交的文章插入数据库
+
+### 文章列表页和文章详情页
+
+* 查找数据库循环显示在内容模板中
+
+### 编辑与删除文章
+
+* 通过postId在数据库中查找记录
+* 通过author查找是否是该文章作者, 以确定权限
+* 编辑=update, 删除=delete
+
+
+## 评论
+
+### 评论模型设计
+
+* 评论
+    - 作者
+    - 评论内容
+    - 被评论的帖子id 
+
+### 显示评论
+
+* 评论数即某个postId下评论的count总和
+* 通过author判断是否具有删除评论的权限
+
+### 创建和删除评论
+
+
+
+## 404页面
+
+* 访问不存在的路径时的友好显示
+* `res.headersSent`: 是否发送了响应, 如果没法送则使用404模板
+
+
+## 错误页面
+
+* 当服务器出现错误时显示友好页面, 而不要把错误显示出来, 主要是为了安全
+
+
+## 忽略文件
+
+* 上传空目录而不上传其中文件的方法:
+
+```shell
+# Ignore everything in this directory
+*
+# Except this file
+!.gitignore
+```
