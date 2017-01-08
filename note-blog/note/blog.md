@@ -17,7 +17,7 @@
 
 ```shell
 - models/                    # 存放模型, 即操作数据库的文件
-      
+      user.js                # 注册用户      
 - views/                     # 存放模板文件
       header.ejs             # 页面头部模板
       body.ejs               # 页面主体模板
@@ -34,8 +34,8 @@
       signup.js              # 注册路由
 - middlewares/               # 存放自定义中间件
       check-user.js          # 检查用户状态的中间件
-- lib/                       # 驱动库
-      mongo.js               # 连接mongodb
+- lib/                       # 操作库
+      mongo.js               # 操作mongodb
 - public                     # 存放静态文件
     - css/                   # css
           style.css          # 样式
@@ -360,3 +360,31 @@ var mongoose = require('mongoose');
 // 连接数据库
 mongoose.connect(config.mongodb);
 ```
+
+
+## 实现注册功能
+
+
+### 用户模型设计
+
+* 用户信息
+    - 用户名
+    - 用户密码(sha1)
+    - 头像(上传文件, 但保存文件路径到数据库)
+    - 性别
+    - 个人介绍
+
+
+### 注册页面
+
+* `form`表单在上传文件时需要添加`enctype="multipart/form-data"`属性
+* `res.render()`可以返回渲染后的模板文件
+
+
+### 注册与上传文件
+
+* `express-formidable`中间件用于处理form表单及文件上传
+* 获取表单数据
+    - `req.fields.HTML标签name属性值`: 获取标签value
+    - `req.files.HTML标签name属性值.path`: 获取文件路径
+        - 然后再`.split(path.sep).pop()`获取文件名
