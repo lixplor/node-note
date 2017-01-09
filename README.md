@@ -46,7 +46,7 @@ Node.js学习笔记
             - [x] 代码设计模式
             - [x] ~~域~~(已过时)
         - [x] 示例项目
-    - 一起学Node.js
+    - 一起学Node.js ([Demo](https://github.com/lixplor/node-blog))
         - [x] 开发环境搭建
             - [x] Node.js的安装和使用
             - [x] MongoDB的安装和使用
